@@ -1,113 +1,144 @@
 import { useEffect, useState } from "react";
 
 export default function LinearSearch() {
-  const [size, setSize] = useState(5);
-  const [numbers, setNumbers] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(null);
-  const [foundIndex, setFoundIndex] = useState(null);
+  var[size,setSize]=useState(5);
+  var[search,setsearch]=useState();
+  var[foundIndex,setfoundIndex]=useState(-1);
+  var[currentIndex,setcurrentIndex]=useState(null);
+  var[numbers,setnumber]=useState([]);
+  useEffect(()=>{
+     setnumber(Array(size).fill(" "));
+  },[size]);
 
-  useEffect(() => {
-    setNumbers(Array(size).fill(""));
-  }, [size]);
-
-  const handleNumberChange = (value, index) => {
+  const handleChange=(value,index)=>{
     const updated = [...numbers];
     updated[index] = value;
-    setNumbers(updated);
-  };
+    setnumber(updated);
+  }
 
-  const handleSearch = (e) => {
+  const SearchElement=(e) => {
     e.preventDefault();
 
-    setFoundIndex(null);
+    setfoundIndex(null);
     let i = 0;
 
     const interval = setInterval(() => {
       if (i >= numbers.length) {
         clearInterval(interval);
-        setCurrentIndex(null);
+        setcurrentIndex(null);
+        setfoundIndex(-1);
         return;
       }
 
-      setCurrentIndex(i);
+      setcurrentIndex(i);
 
-      if (Number(numbers[i]) === Number(searchValue)) {
-        setFoundIndex(i);
+      if (Number(numbers[i]) === Number(search)) {
+        setfoundIndex(i);
         clearInterval(interval);
       }
 
       i++;
-    }, 800); // speed of animation
+    }, 800);
   };
-
+  
   return (
-    <div className="container-fluid p-4 alert alert-primary">
-      <h3>Linear Search Animation</h3>
-
-      <div className="row">
-        <div className="col-md-6 mb-3">
-          <label>Change Array Size</label>
-          <input
-            type="number"
-            value={size}
-            onChange={(e) => setSize(Number(e.target.value))}
-            className="form-control"
-          />
-        </div>
-        <div className="col-md-6"></div>
-
-        {numbers.map((num, index) => (
-          <div className="col-md-2" key={index}>
+    <>
+      <div className="container-fluid  ">
+        <div className="row">
+          <div className="col-md-12 p-3 navbar text-white ">
+            <h4>Linear Search Algorithm</h4>
+          </div>
+          <div className="col-md-12 mt-3 ">
+            <label htmlFor="size">
+              Change Size* (default size is{" "}
+              <span className="text-danger font-bolder">5</span> )
+            </label>
             <input
               type="number"
-              value={num}
-              onChange={(e) =>
-                handleNumberChange(e.target.value, index)
-              }
-              className="form-control mb-2"
-              placeholder={`Element ${index + 1}`}
+              defaultValue={size}
+              onChange={(e) => {
+                setSize(Number(e.target.value));
+              }}
+              className="form-control w-50"
+              name=""
+              id=""
             />
           </div>
-        ))}
-      </div>
+          <div className="col-md-12">
+            <div className="row">
+              {numbers.map((num, index) => {
+                return (
+                  <>
+                    <div className="col-md-3 mt-3  ">
+                      <input
+                        type="number"
+                        className="form-control"
+                        name=""
+                        id=""
+                        placeholder={`enter number ${index + 1}`}
+                        onChange={(e) => handleChange(e.target.value, index)}
+                      />
+                    </div>
+                  </>
+                );
+              })}
+              <div className="col-md-12 mt-3 mb-3">
+                <h5> search element</h5>
+                <input
+                  type="number"
+                  value={search}
+                  onChange={(e) => {
+                    setsearch(e.target.value);
+                  }}
+                  className="form-control float-left w-25"
+                  name=""
+                  id=""
+                />
 
-      <form onSubmit={handleSearch} className="mt-3">
-        <input
-          type="number"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          className="w-25"
-          placeholder="Search value"
-        />
-        <button className="btn btn-primary ms-2">
-          Search
-        </button>
-      </form>
+                <button
+                  className="btn btn-primary pr-5 pl-5 ml-3"
+                  onClick={SearchElement}
+                >
+                  search
+                </button>
+              </div>
 
-      <div className="row mt-4">
-        {numbers.map((num, index) => (
-          <div className="col-md-1" key={index}>
-            <button
-              className={`btn w-100 ${
-                index === foundIndex
-                  ? "btn-success"
-                  : index === currentIndex
-                  ? "btn-warning"
-                  : "btn-secondary"
-              }`}
-            >
-              {num}
-            </button>
+              {numbers.map((num, index) => {
+                return (
+                  <>
+                    <div className="col-md-1 ms-2 mt-2" key={index}>
+                      <button
+                        className={`btn w-100 ${
+                          index === foundIndex
+                            ? "btn-success"
+                            : index === currentIndex
+                              ? "btn-warning"
+                              : "btn-secondary"
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    </div>
+                  </>
+                );
+              })}
+            </div>
           </div>
-        ))}
+          
+            {foundIndex >= 0 && (
+              <h5 className="mt-3 ml-5 fw-bold text-success">
+                Element found at index: {foundIndex}
+              </h5>
+            )}
+              { 
+                foundIndex=== -1 && (
+                  <h5 className="mt-3 ml-5 fw-bold text-success">
+                  Element Not Found
+                </h5>
+                )
+              }
+        </div>
       </div>
-
-      {foundIndex !== null && (
-        <p className="mt-3 fw-bold text-success">
-          Element found at index: {foundIndex}
-        </p>
-      )}
-    </div>
+    </>
   );
 }
